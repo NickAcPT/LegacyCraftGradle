@@ -25,7 +25,6 @@ class MinecraftProvider(val project: Project) {
     val minecraftVersionJson = project.getCacheFile("version-$version.json")
     val minecraftJar = project.getCacheFile("minecraft-$version.jar")
     val minecraftMappedJar = project.getCacheFile("minecraft-$version-mapped.jar")
-    val optifineJar = project.getCacheFile("optifine-$version.jar")
     lateinit var minecraftVersionMeta: MinecraftVersionMeta
 
     fun provide() {
@@ -66,19 +65,19 @@ class MinecraftProvider(val project: Project) {
         )
 
         val mappings = craftExtension.mappingsProvider.getMappingsForVersion(clientVersion)
-        val outputFile = if (mappings != null) minecraftMappedJar else minecraftJar
+        val outputFile = minecraftMappedJar
 
-        if (clientVersion.optifineUrl != null) {
-            downloadIfChanged(URL(clientVersion.optifineUrl), optifineJar, project.logger)
-            if (optifineJar.exists()) mergeZip(minecraftJar, optifineJar)
+        val jarMods = clientVersion.getJarModUrlsToApply()
+
+        jarMods.forEachIndexed { index, jarModUrl ->
+            val modFile = project.getCacheFile("jarmod-$index-$clientVersion.jar")
+            downloadIfChanged(URL(jarModUrl), modFile, project.logger)
+            if (modFile.exists())
+                mergeZip(minecraftJar, modFile)
         }
 
-        if (mappings != null) {
-            println(":mapping - Remapping Minecraft $clientVersion")
-            remapJar(project, minecraftJar, outputFile, mappings)
-        } else {
-            println(":mapping - No mappings for Minecraft $clientVersion")
-        }
+        println(":mapping - Remapping Minecraft $clientVersion")
+        remapJar(project, minecraftJar, outputFile, mappings)
         return outputFile
     }
 

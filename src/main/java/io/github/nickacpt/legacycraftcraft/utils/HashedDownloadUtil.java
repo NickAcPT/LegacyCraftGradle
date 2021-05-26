@@ -59,7 +59,7 @@ public class HashedDownloadUtil {
 		startDownload.run();
 
 		HttpURLConnection connection = (HttpURLConnection) from.openConnection();
-		connection.setRequestProperty("Accept-Encoding", "gzip");
+//		connection.setRequestProperty("Accept-Encoding", "gzip");
 		connection.connect();
 
 		int code = connection.getResponseCode();

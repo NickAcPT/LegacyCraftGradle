@@ -60,8 +60,8 @@ object DownloadUtil {
             connection.setRequestProperty("If-None-Match", etag)
         }
 
-        // We want to download gzip compressed stuff
-        connection.setRequestProperty("Accept-Encoding", "gzip")
+//         We want to download gzip compressed stuff
+//        connection.setRequestProperty("Accept-Encoding", "gzip")
 
         // Try make the connection, it will hang here if the connection is bad
         connection.connect()
