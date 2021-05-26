@@ -70,9 +70,8 @@ class MinecraftProvider(val project: Project) {
 
         if (clientVersion.optifineUrl != null) {
             downloadIfChanged(URL(clientVersion.optifineUrl), optifineJar, project.logger)
-            if (optifineJar.exists()) mergeZip(outputFile, optifineJar)
+            if (optifineJar.exists()) mergeZip(minecraftJar, optifineJar)
         }
-
 
         if (mappings != null) {
             println(":mapping - Remapping Minecraft $clientVersion")
