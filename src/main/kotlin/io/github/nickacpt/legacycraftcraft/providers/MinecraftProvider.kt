@@ -3,6 +3,7 @@ package io.github.nickacpt.legacycraftcraft.providers
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import io.github.nickacpt.legacycraftcraft.LegacyCraftPlugin
 import io.github.nickacpt.legacycraftcraft.getCacheFile
 import io.github.nickacpt.legacycraftcraft.legacyCraftExtension
 import io.github.nickacpt.legacycraftcraft.mergeZip
@@ -54,6 +55,11 @@ class MinecraftProvider(val project: Project) {
         }
 
         minecraftVersionMeta = mapper.readValue(minecraftVersionJson)
+
+        if (!LegacyCraftPlugin.refreshDeps && minecraftMappedJar.exists()) {
+            return minecraftMappedJar
+        }
+
         val clientDownload = minecraftVersionMeta.getDownload("client")
 
         HashedDownloadUtil.downloadIfInvalid(

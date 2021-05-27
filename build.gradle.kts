@@ -15,7 +15,6 @@ repositories {
 }
 
 dependencies {
-    implementation(gradleApi())
     implementation(gradleKotlinDsl())
 
     // I/O

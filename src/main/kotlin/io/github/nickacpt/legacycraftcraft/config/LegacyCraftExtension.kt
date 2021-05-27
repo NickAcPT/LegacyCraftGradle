@@ -1,9 +1,6 @@
 package io.github.nickacpt.legacycraftcraft.config
 
-import io.github.nickacpt.legacycraftcraft.providers.MappingsProvider
-import io.github.nickacpt.legacycraftcraft.providers.MinecraftLibraryProvider
-import io.github.nickacpt.legacycraftcraft.providers.MinecraftProvider
-import io.github.nickacpt.legacycraftcraft.providers.MixinProvider
+import io.github.nickacpt.legacycraftcraft.providers.*
 
 open class LegacyCraftExtension {
     var version: ClientVersion = ClientVersion.ONE_FIVE_TWO
@@ -12,4 +9,6 @@ open class LegacyCraftExtension {
     internal lateinit var minecraftProvider: MinecraftProvider
     internal lateinit var minecraftLibraryProvider: MinecraftLibraryProvider
     internal lateinit var mixinProvider: MixinProvider
+    internal lateinit var nativesProvider: MinecraftNativesProvider
+    internal lateinit var launchProvider: MinecraftLaunchProvider
 }

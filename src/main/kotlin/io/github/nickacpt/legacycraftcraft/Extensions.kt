@@ -28,7 +28,7 @@ val Project.cacheFolder: File
     }
 
 fun Project.getCacheFolder(version: ClientVersion): File {
-    return File(cacheFolder, version.name.toLowerCase())
+    return File(cacheFolder, version.toString())
 }
 
 fun Project.getCacheFile(name: String): File {

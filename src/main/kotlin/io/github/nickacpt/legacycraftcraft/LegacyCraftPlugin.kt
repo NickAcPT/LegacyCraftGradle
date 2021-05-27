@@ -1,10 +1,7 @@
 package io.github.nickacpt.legacycraftcraft
 
 import io.github.nickacpt.legacycraftcraft.config.LegacyCraftExtension
-import io.github.nickacpt.legacycraftcraft.providers.MappingsProvider
-import io.github.nickacpt.legacycraftcraft.providers.MinecraftLibraryProvider
-import io.github.nickacpt.legacycraftcraft.providers.MinecraftProvider
-import io.github.nickacpt.legacycraftcraft.providers.MixinProvider
+import io.github.nickacpt.legacycraftcraft.providers.*
 import io.github.nickacpt.legacycraftcraft.tasks.ApplyMixinsTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -26,6 +23,8 @@ class LegacyCraftPlugin : Plugin<Project> {
                 minecraftProvider = MinecraftProvider(project)
                 minecraftLibraryProvider = MinecraftLibraryProvider(project)
                 mixinProvider = MixinProvider(project)
+                nativesProvider = MinecraftNativesProvider(project)
+                launchProvider = MinecraftLaunchProvider(project)
             }
 
             val version = extension.version
@@ -34,6 +33,8 @@ class LegacyCraftPlugin : Plugin<Project> {
             extension.minecraftProvider.provide()
             extension.minecraftLibraryProvider.provide()
             extension.mixinProvider.provide()
+            extension.nativesProvider.provide()
+            extension.launchProvider.provide()
 
             val jarTask = getJarTask().apply {
                 (this as? Jar)?.archiveClassifier?.set("dev")

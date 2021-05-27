@@ -121,6 +121,9 @@ public class MinecraftVersionMeta {
     }
 
     public static class Download extends Downloadable {
+        public File relativeFile(File baseDirectory) {
+            return new File(baseDirectory, getPath());
+        }
     }
 
     public static class Library {
@@ -159,7 +162,7 @@ public class MinecraftVersionMeta {
             return isValidForOS();
         }
 
-        public Classifier getClassifierForOS() {
+        public Download getClassifierForOS() {
             return getDownloads().getClassifier(natives.get(OperatingSystem.INSTANCE.getOs()));
         }
 
@@ -190,9 +193,9 @@ public class MinecraftVersionMeta {
 
     public static class Downloads {
         private Artifact artifact;
-        private Map<String, Classifier> classifiers;
+        private Map<String, Download> classifiers;
 
-        public Classifier getClassifier(String os) {
+        public Download getClassifier(String os) {
             return classifiers.get(os);
         }
 
@@ -200,7 +203,7 @@ public class MinecraftVersionMeta {
             return artifact;
         }
 
-        public Map<String, Classifier> getClassifiers() {
+        public Map<String, Download> getClassifiers() {
             return classifiers;
         }
     }
