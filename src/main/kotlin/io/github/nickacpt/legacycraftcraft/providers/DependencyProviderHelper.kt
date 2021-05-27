@@ -6,7 +6,7 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.kotlin.dsl.create
 import java.io.File
 
-fun Project.provideDependency(group: String, name: String, version: String, file: File) {
+fun Project.provideDependency(group: String, name: String, version: String, file: File): File {
     val providedDependency = project.dependencies.create(
         group,
         name,
@@ -24,4 +24,6 @@ fun Project.provideDependency(group: String, name: String, version: String, file
         JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME,
         providedDependency
     )
+
+    return depOutFile
 }

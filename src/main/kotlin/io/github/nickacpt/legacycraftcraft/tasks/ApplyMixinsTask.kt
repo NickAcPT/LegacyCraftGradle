@@ -9,7 +9,6 @@ import io.github.nickacpt.mixinofflineappliertool.MixinSide
 import org.gradle.api.DefaultTask
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.get
@@ -24,8 +23,7 @@ open class ApplyMixinsTask : DefaultTask() {
     @get:InputFile
     lateinit var input: File
 
-    @get:OutputDirectory
-    val mixinsOutputDir: File
+    private val mixinsOutputDir: File
         get() = File(project.buildDir, "tmp" + File.separatorChar + "mixins-applied")
 
     @get:OutputFile

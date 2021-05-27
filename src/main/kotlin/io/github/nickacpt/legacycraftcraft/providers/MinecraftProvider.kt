@@ -28,12 +28,11 @@ class MinecraftProvider(val project: Project) {
     val minecraftMappedJar = project.getCacheFile("minecraft-$version-mapped.jar")
     lateinit var minecraftVersionMeta: MinecraftVersionMeta
 
-    fun provide() {
+    fun provide(): File {
         val craftExtension = project.legacyCraftExtension
         val outputFile = getFinalMinecraftJar()
 
-        project.provideDependency("net.minecraft", "minecraft", craftExtension.version.launcherId, outputFile)
-
+        return project.provideDependency("net.minecraft", "minecraft", craftExtension.version.launcherId, outputFile)
     }
 
     private fun getFinalMinecraftJar(): File {

@@ -4,9 +4,7 @@ import io.github.nickacpt.legacycraftcraft.config.ClientVersion
 import io.github.nickacpt.legacycraftcraft.launchers.GameRunProvider
 import io.github.nickacpt.legacycraftcraft.launchers.impl.OneFiveTwoGameRunProvider
 import io.github.nickacpt.legacycraftcraft.legacyCraftExtension
-import io.github.nickacpt.legacycraftcraft.resolveClasspathFile
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.JavaExec
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.maven
@@ -25,7 +23,7 @@ class MinecraftLaunchProvider(val project: Project) {
         val gameDir = File(project.projectDir, "run").also { it.mkdirs() }
         val assetsDir = File(gameDir, "assets")
 
-        val classPath = project.resolveClasspathFile()
+        val classPath = project.legacyCraftExtension.minecraftLibConfiguration.resolve()
 
         if (gameRunProvider != null) {
             val runClientTask = project.tasks.create<JavaExec>("runClient")
@@ -34,11 +32,14 @@ class MinecraftLaunchProvider(val project: Project) {
     }
 
     private fun addLegacyLauncher() {
+        val launchWrapperConfiguration = project.configurations.create("launchWrapper")
+       project.legacyCraftExtension.launchWrapperConfiguration = launchWrapperConfiguration
+
         val launcherVersion = "aff3a537ee"
         project.repositories.maven("https://jitpack.io")
 
         project.dependencies.add(
-            JavaPlugin.RUNTIME_ONLY_CONFIGURATION_NAME,
+            "launchWrapper",
             "com.github.sp614x:LegacyLauncher:$launcherVersion"
         )
     }

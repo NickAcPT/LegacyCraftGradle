@@ -34,7 +34,6 @@ class LegacyCraftPlugin : Plugin<Project> {
             extension.minecraftLibraryProvider.provide()
             extension.mixinProvider.provide()
             extension.nativesProvider.provide()
-            extension.launchProvider.provide()
 
             val jarTask = getJarTask().apply {
                 (this as? Jar)?.archiveClassifier?.set("dev")
@@ -42,7 +41,12 @@ class LegacyCraftPlugin : Plugin<Project> {
             val applyMixins = tasks.create("applyMixins", ApplyMixinsTask::class).apply {
                 input = jarTask.outputs.files.first()
             }
+
+            extension.applyMixinsTask = applyMixins
             applyMixins.dependsOn(jarTask)
+
+            extension.launchProvider.provide()
+
             jarTask.finalizedBy(applyMixins)
             tasks.getByName("assemble").finalizedBy(applyMixins)
         }

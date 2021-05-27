@@ -10,7 +10,7 @@ interface GameRunProvider {
         nativesDir: File,
         gameDir: File,
         assetsDir: File,
-        classPath: List<File>
+        classPath: MutableSet<File>
     )
 
 }
