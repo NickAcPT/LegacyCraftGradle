@@ -1,10 +1,12 @@
 package io.github.nickacpt.legacycraftcraft.providers
 
 import io.github.nickacpt.legacycraftcraft.config.ClientVersion
+import io.github.nickacpt.legacycraftcraft.getCacheFile
 import io.github.nickacpt.legacycraftcraft.launchers.GameRunProvider
 import io.github.nickacpt.legacycraftcraft.launchers.impl.OneFiveTwoGameRunProvider
 import io.github.nickacpt.legacycraftcraft.legacyCraftExtension
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.JavaExec
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.maven
@@ -21,18 +23,22 @@ class MinecraftLaunchProvider(val project: Project) {
 
         val (nativesDir, _) = extension.nativesProvider.getNativeFileDirs()
         val gameDir = File(project.projectDir, "run").also { it.mkdirs() }
-        val assetsDir = File(gameDir, "assets")
+
+        extension.assetsProvider.provide()
+        val assetsDir = project.getCacheFile(extension.version, "assets")
 
         val classPath = project.legacyCraftExtension.minecraftLibConfiguration.resolve()
 
         if (gameRunProvider != null) {
-            val runClientTask = project.tasks.create<JavaExec>("runClient")
+            val runClientTask = project.tasks.create<JavaExec>("runClient") {}
             gameRunProvider.registerRunExtension(runClientTask, nativesDir, gameDir, assetsDir, classPath)
         }
     }
 
     private fun addLegacyLauncher() {
-        val launchWrapperConfiguration = project.configurations.create("launchWrapper")
+        val launchWrapperConfiguration = project.configurations.create("launchWrapper") {
+            it.extendsFrom(project.configurations.getByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME))
+        }
        project.legacyCraftExtension.launchWrapperConfiguration = launchWrapperConfiguration
 
         val launcherVersion = "aff3a537ee"
@@ -40,6 +46,10 @@ class MinecraftLaunchProvider(val project: Project) {
 
         project.dependencies.add(
             "launchWrapper",
+            "com.github.sp614x:LegacyLauncher:$launcherVersion"
+        )
+        project.dependencies.add(
+            JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
             "com.github.sp614x:LegacyLauncher:$launcherVersion"
         )
     }

@@ -26,5 +26,12 @@ class MinecraftLibraryProvider(val project: Project) {
                 )
             }
         }
+
+        // Provide updated ow2 asm
+        val asmVersion = "9.1"
+        project.dependencies.add(
+            JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
+            "org.ow2.asm:asm:$asmVersion"
+        )
     }
 }

@@ -49,4 +49,8 @@ public class AssetIndex {
 	public boolean isVirtual() {
 		return this.virtual;
 	}
+
+	public Map<String, AssetObject> getObjects() {
+		return objects;
+	}
 }

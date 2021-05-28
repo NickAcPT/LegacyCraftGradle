@@ -1,7 +1,5 @@
 package io.github.nickacpt.legacycraftcraft.providers
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.nickacpt.legacycraftcraft.LegacyCraftPlugin
 import io.github.nickacpt.legacycraftcraft.getCacheFile
@@ -21,23 +19,23 @@ import java.net.URL
 class MinecraftProvider(val project: Project) {
     val version = project.legacyCraftExtension.version.launcherId
 
-    val mapper = jsonMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
     val versionManifestJson = project.getCacheFile("version_manifest.json")
     val minecraftVersionJson = project.getCacheFile("version-$version.json")
     val minecraftJar = project.getCacheFile("minecraft-$version.jar")
     val minecraftMappedJar = project.getCacheFile("minecraft-$version-mapped.jar")
     lateinit var minecraftVersionMeta: MinecraftVersionMeta
 
-    fun provide(): File {
+    fun provide() {
         val craftExtension = project.legacyCraftExtension
         val outputFile = getFinalMinecraftJar()
 
-        return project.provideDependency("net.minecraft", "minecraft", craftExtension.version.launcherId, outputFile)
+        project.provideDependency("net.minecraft", "minecraft", craftExtension.version.launcherId, outputFile)
     }
 
     private fun getFinalMinecraftJar(): File {
         val craftExtension = project.legacyCraftExtension
         val clientVersion = craftExtension.version
+        val mapper = craftExtension.mapper
 
         downloadIfChanged(URL(VERSION_MANIFESTS), versionManifestJson, project.logger)
         val versionManifest = mapper.readValue<ManifestVersion>(versionManifestJson)

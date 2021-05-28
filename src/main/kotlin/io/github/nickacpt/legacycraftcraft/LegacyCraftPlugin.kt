@@ -25,6 +25,7 @@ class LegacyCraftPlugin : Plugin<Project> {
                 mixinProvider = MixinProvider(project)
                 nativesProvider = MinecraftNativesProvider(project)
                 launchProvider = MinecraftLaunchProvider(project)
+                assetsProvider = MinecraftAssetsProvider(project)
             }
 
             val version = extension.version

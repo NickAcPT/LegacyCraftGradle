@@ -15,11 +15,10 @@ class OneFiveTwoGameRunProvider(val project: Project) : GameRunProvider {
         classPath: MutableSet<File>
     ) {
         val applyMixinsTask = project.legacyCraftExtension.applyMixinsTask
-        val minecraftProvider = project.legacyCraftExtension.minecraftProvider
         runClientTask.classpath(
+            applyMixinsTask.output,
             project.legacyCraftExtension.launchWrapperConfiguration.resolve(),
-            classPath.filterNot { it == minecraftProvider.provide() },
-            applyMixinsTask.output
+            classPath.filterNot { it == project.legacyCraftExtension.minecraftDependencyLocation || it.nameWithoutExtension == "launchwrapper-1.5" }
         )
         runClientTask.workingDir = gameDir
         runClientTask.mainClass.set("net.minecraft.launchwrapper.Launch")
@@ -34,7 +33,8 @@ class OneFiveTwoGameRunProvider(val project: Project) : GameRunProvider {
         )
 
         runClientTask.jvmArgs = listOf(
-            "\"-Djava.library.path=${nativesDir.absolutePath}\""
+            "\"-Djava.library.path=${nativesDir.absolutePath}\"",
+            "-Dlegacycraft.launch=true"
         )
 
         runClientTask.dependsOn(applyMixinsTask)
