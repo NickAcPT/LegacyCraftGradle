@@ -14,7 +14,7 @@ fun Project.provideDependency(group: String, name: String, version: String, file
         version
     )
 
-    val outFolder = project.getCacheFile(version).also { it.mkdirs() }
+    val outFolder = project.getCacheFile(project.legacyCraftExtension.version, "dependency").also { it.mkdirs() }
 
     val depOutFile = File(outFolder, "$name-$version.jar")
     file.copyTo(depOutFile.also { it.delete() }, true)

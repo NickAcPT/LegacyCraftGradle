@@ -11,6 +11,8 @@ open class LegacyCraftExtension {
 
     var version: ClientVersion = ClientVersion.ONE_FIVE_TWO
 
+    var runDeobfuscatedClient: Boolean = true
+
     internal lateinit var mappingsProvider: MappingsProvider
     internal lateinit var minecraftProvider: MinecraftProvider
     internal lateinit var minecraftLibraryProvider: MinecraftLibraryProvider

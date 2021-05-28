@@ -17,12 +17,12 @@ import java.net.URL
 
 
 class MinecraftProvider(val project: Project) {
-    val version = project.legacyCraftExtension.version.launcherId
+    val version = project.legacyCraftExtension.version
 
     val versionManifestJson = project.getCacheFile("version_manifest.json")
-    val minecraftVersionJson = project.getCacheFile("version-$version.json")
-    val minecraftJar = project.getCacheFile("minecraft-$version.jar")
-    val minecraftMappedJar = project.getCacheFile("minecraft-$version-mapped.jar")
+    val minecraftVersionJson = project.getCacheFile(version, "version.json")
+    val minecraftJar = project.getCacheFile(version, "minecraft.jar")
+    val minecraftMappedJar = project.getCacheFile(version, "minecraft-mapped.jar")
     lateinit var minecraftVersionMeta: MinecraftVersionMeta
 
     fun provide() {
@@ -73,7 +73,7 @@ class MinecraftProvider(val project: Project) {
         val jarMods = clientVersion.getJarModUrlsToApply()
 
         jarMods.forEachIndexed { index, jarModUrl ->
-            val modFile = project.getCacheFile("jarmod-$index-$clientVersion.jar")
+            val modFile = project.getCacheFile(clientVersion, "jarmod-$index.jar")
             downloadIfChanged(URL(jarModUrl), modFile, project.logger)
             if (modFile.exists())
                 mergeZip(minecraftJar, modFile)

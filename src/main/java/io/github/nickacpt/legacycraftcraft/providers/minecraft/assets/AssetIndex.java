@@ -24,6 +24,7 @@
 
 package io.github.nickacpt.legacycraftcraft.providers.minecraft.assets;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,6 +33,7 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public class AssetIndex {
 	private final Map<String, AssetObject> objects;
+	@JsonProperty("map_to_resources") private boolean mapToResources;
 	private boolean virtual;
 
 	public AssetIndex() {
@@ -52,5 +54,9 @@ public class AssetIndex {
 
 	public Map<String, AssetObject> getObjects() {
 		return objects;
+	}
+
+	public boolean isMapToResources() {
+		return mapToResources;
 	}
 }

@@ -54,7 +54,7 @@ class MinecraftAssetsProvider(val project: Project) {
         val assetIndex: MinecraftVersionMeta.AssetIndex = versionInfo.assetIndex
 
         // get existing cache files
-        val assets: File = project.getCacheFile(extension.version, "assets")
+        var assets: File = project.getCacheFile(extension.version, "assets")
         if (!assets.exists()) {
             assets.mkdirs()
         }
@@ -93,11 +93,16 @@ class MinecraftAssetsProvider(val project: Project) {
         FileReader(assetsInfo).use { fileReader ->
             index = extension.mapper.readValue(fileReader, AssetIndex::class.java)
         }
+
+        if (index.isMapToResources) {
+            assets = File(project.projectDir, "run" + File.separatorChar + "resources").also { it.mkdirs() }
+        }
+
         val stopwatch = Stopwatch.createStarted()
         val parent: Map<String, AssetObject> = index.objects
         for ((key, `object`) in parent) {
             val sha1: String = `object`.hash
-            val filename = "objects" + File.separator + sha1.substring(0, 2) + File.separator + sha1
+            val filename = if (index.isMapToResources) key else "objects" + File.separator + sha1.substring(0, 2) + File.separator + sha1
             val file = File(assets, filename)
             if (offline) {
                 if (file.exists()) {

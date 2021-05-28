@@ -16,7 +16,7 @@ class OneFiveTwoGameRunProvider(val project: Project) : GameRunProvider {
     ) {
         val applyMixinsTask = project.legacyCraftExtension.applyMixinsTask
         runClientTask.classpath(
-            applyMixinsTask.output,
+            if (project.legacyCraftExtension.runDeobfuscatedClient) applyMixinsTask.outputDeobfuscated else applyMixinsTask.output,
             project.legacyCraftExtension.launchWrapperConfiguration.resolve(),
             classPath.filterNot { it == project.legacyCraftExtension.minecraftDependencyLocation || it.nameWithoutExtension == "launchwrapper-1.5" }
         )

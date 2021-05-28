@@ -30,13 +30,19 @@ open class ApplyMixinsTask : DefaultTask() {
     val output: File
         get() = File(input.parentFile, input.nameWithoutExtension.removeSuffix("-dev") + "-jarmod.jar")
 
+    @get:OutputFile
+    val outputDeobfuscated: File
+        get() = File(input.parentFile, input.nameWithoutExtension.removeSuffix("-dev") + "-deobf.jar")
+
     @TaskAction
     fun doAction() {
         mixinsOutputDir.deleteRecursively()
         mixinsOutputDir.mkdirs()
 
-        val tmpOutputMerge = File(output.parentFile, UUID.randomUUID().toString() + "-output.jar").also { ZipUtil.createEmpty(it) }
-        val tmpOutputReobf = File(output.parentFile, UUID.randomUUID().toString() + "-reobf.jar").also { ZipUtil.createEmpty(it) }
+        val tmpOutputMerge =
+            File(output.parentFile, UUID.randomUUID().toString() + "-output.jar").also { ZipUtil.createEmpty(it) }
+        val tmpOutputReobf =
+            File(output.parentFile, UUID.randomUUID().toString() + "-reobf.jar").also { ZipUtil.createEmpty(it) }
 
         val minecraftMappedJar = project.legacyCraftExtension.minecraftProvider.minecraftMappedJar
         val minecraftUnMappedJar = project.legacyCraftExtension.minecraftProvider.minecraftJar
@@ -68,9 +74,12 @@ open class ApplyMixinsTask : DefaultTask() {
             FileSource(it, File(mixinsOutputDir, it))
         }.toTypedArray())
 
+        minecraftMappedJar.copyTo(outputDeobfuscated, true)
+        mergeZip(outputDeobfuscated, tmpOutputMerge)
+
         val mappings =
             project.legacyCraftExtension.mappingsProvider.getMappingsForVersion(project.legacyCraftExtension.version)
-                ?.reverse()
+                .reverse()
 
         println(":applyMixins - Reobfuscating")
         remapJar(project, tmpOutputMerge, tmpOutputReobf, mappings, resolveClassPath = true)
