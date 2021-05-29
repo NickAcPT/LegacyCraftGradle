@@ -37,7 +37,7 @@ class MinecraftLaunchProvider(val project: Project) {
 
     private fun addLegacyLauncher() {
         val launchWrapperConfiguration = project.configurations.create("launchWrapper") {
-            it.extendsFrom(project.configurations.getByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME))
+            project.configurations.getByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME).extendsFrom(it)
         }
        project.legacyCraftExtension.launchWrapperConfiguration = launchWrapperConfiguration
 
@@ -46,10 +46,6 @@ class MinecraftLaunchProvider(val project: Project) {
 
         project.dependencies.add(
             "launchWrapper",
-            "com.github.sp614x:LegacyLauncher:$launcherVersion"
-        )
-        project.dependencies.add(
-            JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
             "com.github.sp614x:LegacyLauncher:$launcherVersion"
         )
     }

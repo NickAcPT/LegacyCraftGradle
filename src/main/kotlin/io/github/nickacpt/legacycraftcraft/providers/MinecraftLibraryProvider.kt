@@ -12,7 +12,7 @@ class MinecraftLibraryProvider(val project: Project) {
 
     fun provide() {
         project.legacyCraftExtension.minecraftLibConfiguration =  project.configurations.create("minecraftlib") {
-            it.extendsFrom(project.configurations.getByName(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME))
+            project.configurations.getByName(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME).extendsFrom(it)
         }
         project.repositories.maven(LIBRARIES_BASE)
 
