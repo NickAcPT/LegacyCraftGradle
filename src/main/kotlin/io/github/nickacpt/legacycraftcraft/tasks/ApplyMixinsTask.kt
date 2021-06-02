@@ -34,6 +34,10 @@ open class ApplyMixinsTask : DefaultTask() {
     val outputDeobfuscated: File
         get() = File(input.parentFile, input.nameWithoutExtension.removeSuffix("-dev") + "-deobf.jar")
 
+    @get:OutputFile
+    val outputReobfuscated: File
+        get() = File(input.parentFile, input.nameWithoutExtension.removeSuffix("-dev") + "-reobf.jar")
+
     @TaskAction
     fun doAction() {
         mixinsOutputDir.deleteRecursively()
@@ -41,8 +45,6 @@ open class ApplyMixinsTask : DefaultTask() {
 
         val tmpOutputMerge =
             File(output.parentFile, UUID.randomUUID().toString() + "-output.jar").also { ZipUtil.createEmpty(it) }
-        val tmpOutputReobf =
-            File(output.parentFile, UUID.randomUUID().toString() + "-reobf.jar").also { ZipUtil.createEmpty(it) }
 
         val minecraftMappedJar = project.legacyCraftExtension.minecraftProvider.minecraftMappedJar
         val minecraftUnMappedJar = project.legacyCraftExtension.minecraftProvider.minecraftJar
@@ -82,16 +84,15 @@ open class ApplyMixinsTask : DefaultTask() {
                 .reverse()
 
         println(":applyMixins - Reobfuscating")
-        remapJar(project, tmpOutputMerge, tmpOutputReobf, mappings, resolveClassPath = true)
+        remapJar(project, tmpOutputMerge, outputReobfuscated, mappings, resolveClassPath = true)
 
         minecraftUnMappedJar.copyTo(output, true)
 
-        mergeZip(output, tmpOutputReobf)
+        mergeZip(output, outputReobfuscated)
 
         ZipUtil.removeEntry(output, "META-INF/")
 
         if (tmpOutputMerge.exists()) tmpOutputMerge.delete()
-        if (tmpOutputReobf.exists()) tmpOutputReobf.delete()
         println(":applyMixins - Done")
     }
 
