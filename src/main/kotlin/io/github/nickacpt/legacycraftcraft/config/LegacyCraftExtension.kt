@@ -13,6 +13,8 @@ open class LegacyCraftExtension {
 
     var runDeobfuscatedClient: Boolean = true
 
+    var extraJarMods = mutableListOf<String>()
+
     internal lateinit var mappingsProvider: MappingsProvider
     internal lateinit var minecraftProvider: MinecraftProvider
     internal lateinit var minecraftLibraryProvider: MinecraftLibraryProvider

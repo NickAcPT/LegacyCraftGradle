@@ -70,7 +70,7 @@ class MinecraftProvider(val project: Project) {
         val mappings = craftExtension.mappingsProvider.getMappingsForVersion(clientVersion)
         val outputFile = minecraftMappedJar
 
-        val jarMods = clientVersion.getJarModUrlsToApply()
+        val jarMods = clientVersion.getJarModUrlsToApply() + craftExtension.extraJarMods
 
         jarMods.forEachIndexed { index, jarModUrl ->
             val modFile = project.getCacheFile(clientVersion, "jarmod-$index.jar")
