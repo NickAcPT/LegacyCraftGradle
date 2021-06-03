@@ -1,6 +1,6 @@
 package io.github.nickacpt.legacycraftgradle
 
-import io.github.nickacpt.legacycraftgradle.config.LegacyCraftExtension
+import io.github.nickacpt.legacycraftgradle.abstraction.GameVersionAbstraction
 import io.github.nickacpt.legacycraftgradle.providers.*
 import io.github.nickacpt.legacycraftgradle.tasks.ApplyMixinsTask
 import org.gradle.api.Plugin
@@ -8,14 +8,19 @@ import org.gradle.api.Project
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.create
 
-class LegacyCraftPlugin : Plugin<Project> {
+abstract class BaseLegacyCraftPlugin : Plugin<Project> {
     companion object {
         var refreshDeps: Boolean = false
     }
 
+    lateinit var abstraction: GameVersionAbstraction<*>
+
     override fun apply(project: Project) {
         refreshDeps = project.gradle.startParameter.isRefreshDependencies
-        val extension = project.extensions.create("legacycraft", LegacyCraftExtension::class)
+        abstraction.project = project
+        abstraction.init()
+        val extension = abstraction.getExtension()
+        extension.abstraction = abstraction
 
         project.evaluate {
             with(extension) {
@@ -28,8 +33,8 @@ class LegacyCraftPlugin : Plugin<Project> {
                 assetsProvider = MinecraftAssetsProvider(project)
             }
 
-            val version = extension.version
-            println("LegacyCraftGradle - Minecraft Version ${version.launcherId}")
+            val version = extension.abstraction.getVersionName()
+            println("LegacyCraftGradle - Minecraft $version")
 
             extension.minecraftProvider.provide()
             extension.minecraftLibraryProvider.provide()

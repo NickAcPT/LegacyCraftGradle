@@ -1,6 +1,6 @@
-package io.github.nickacpt.legacycraftgradle.launchers.impl
+package io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.launchers.impl
 
-import io.github.nickacpt.legacycraftgradle.launchers.GameRunProvider
+import io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.launchers.GameRunProvider
 import io.github.nickacpt.legacycraftgradle.legacyCraftExtension
 import org.gradle.api.Project
 import org.gradle.api.tasks.JavaExec

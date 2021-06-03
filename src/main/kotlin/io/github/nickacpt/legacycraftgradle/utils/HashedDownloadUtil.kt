@@ -25,7 +25,7 @@ package io.github.nickacpt.legacycraftgradle.utils
 
 import com.google.common.hash.Hashing
 import com.google.common.io.Files
-import io.github.nickacpt.legacycraftgradle.LegacyCraftPlugin.Companion.refreshDeps
+import io.github.nickacpt.legacycraftgradle.BaseLegacyCraftPlugin.Companion.refreshDeps
 import io.github.nickacpt.legacycraftgradle.utils.DownloadUtil.toNiceSize
 import org.apache.commons.io.FileUtils
 import org.gradle.api.logging.Logger

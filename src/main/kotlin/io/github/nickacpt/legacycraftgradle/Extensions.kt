@@ -1,7 +1,6 @@
 package io.github.nickacpt.legacycraftgradle
 
-import io.github.nickacpt.legacycraftgradle.config.ClientVersion
-import io.github.nickacpt.legacycraftgradle.config.LegacyCraftExtension
+import io.github.nickacpt.legacycraftgradle.config.BaseLegacyCraftExtension
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
 import org.zeroturnaround.zip.ByteSource
@@ -11,8 +10,8 @@ import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
-val Project.legacyCraftExtension: LegacyCraftExtension
-    get() = extensions.getByType(LegacyCraftExtension::class)
+val Project.legacyCraftExtension: BaseLegacyCraftExtension
+    get() = extensions.getByType(BaseLegacyCraftExtension::class)
 
 fun Project.evaluate(code: Project.() -> Unit) {
     if (project.state.executed) {
@@ -22,21 +21,17 @@ fun Project.evaluate(code: Project.() -> Unit) {
     }
 }
 
-val Project.cacheFolder: File
+val Project.legacyCraftCacheFolder: File
     get() {
         return File(gradle.gradleUserHomeDir, "caches" + File.separatorChar + "legacy-minecraft")
     }
 
-fun Project.getCacheFolder(version: ClientVersion): File {
-    return File(cacheFolder, version.toString())
+fun Project.getCacheFolder(): File {
+    return File(legacyCraftCacheFolder, (project.legacyCraftExtension.abstraction.getVersionName()))
 }
 
 fun Project.getCacheFile(name: String): File {
-    return File(cacheFolder, name)
-}
-
-fun Project.getCacheFile(version: ClientVersion, name: String): File {
-    return File(getCacheFolder(version), name)
+    return File(getCacheFolder(), name)
 }
 
 fun Project.resolveClasspathPath(): List<Path> {

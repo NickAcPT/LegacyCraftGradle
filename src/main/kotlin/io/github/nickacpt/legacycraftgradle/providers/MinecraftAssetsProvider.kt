@@ -24,12 +24,13 @@
 package io.github.nickacpt.legacycraftgradle.providers
 
 import com.google.common.base.Stopwatch
-import io.github.nickacpt.legacycraftgradle.config.LegacyCraftExtension
+import io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.VanillaGameVersionImpl
+import io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.minecraft.MinecraftVersionMeta
+import io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.minecraft.assets.AssetIndex
+import io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.minecraft.assets.AssetObject
+import io.github.nickacpt.legacycraftgradle.config.BaseLegacyCraftExtension
 import io.github.nickacpt.legacycraftgradle.getCacheFile
 import io.github.nickacpt.legacycraftgradle.legacyCraftExtension
-import io.github.nickacpt.legacycraftgradle.providers.minecraft.MinecraftVersionMeta
-import io.github.nickacpt.legacycraftgradle.providers.minecraft.assets.AssetIndex
-import io.github.nickacpt.legacycraftgradle.providers.minecraft.assets.AssetObject
 import io.github.nickacpt.legacycraftgradle.utils.HashedDownloadUtil
 import io.github.nickacpt.legacycraftgradle.utils.ProgressLogger
 import io.github.nickacpt.legacycraftgradle.utils.RESOURCES_BASE
@@ -48,13 +49,14 @@ import java.util.concurrent.TimeUnit
 class MinecraftAssetsProvider(val project: Project) {
     @Throws(IOException::class)
     fun provide() {
-        val extension: LegacyCraftExtension = project.legacyCraftExtension
+        val extension: BaseLegacyCraftExtension = project.legacyCraftExtension
         val offline = project.gradle.startParameter.isOffline
-        val versionInfo: MinecraftVersionMeta = extension.minecraftProvider.minecraftVersionMeta
+        val versionInfo: MinecraftVersionMeta =
+            (extension.abstraction as VanillaGameVersionImpl).minecraftProvider.minecraftVersionMeta
         val assetIndex: MinecraftVersionMeta.AssetIndex = versionInfo.assetIndex ?: return
 
         // get existing cache files
-        var assets: File = project.getCacheFile(extension.version, "assets")
+        var assets: File = project.getCacheFile("assets")
         if (!assets.exists()) {
             assets.mkdirs()
         }
@@ -102,7 +104,10 @@ class MinecraftAssetsProvider(val project: Project) {
         val parent: Map<String, AssetObject> = index.fileMap
         for ((key, `object`) in parent) {
             val sha1: String = `object`.hash ?: ""
-            val filename = if (index.isMapToResources) key else "objects" + File.separator + sha1.substring(0, 2) + File.separator + sha1
+            val filename = if (index.isMapToResources) key else "objects" + File.separator + sha1.substring(
+                0,
+                2
+            ) + File.separator + sha1
             val file = File(assets, filename)
             if (offline) {
                 if (file.exists()) {

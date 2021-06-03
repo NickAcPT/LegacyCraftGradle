@@ -1,4 +1,4 @@
-package io.github.nickacpt.legacycraftgradle.launchers
+package io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.launchers
 
 import org.gradle.api.tasks.JavaExec
 import java.io.File

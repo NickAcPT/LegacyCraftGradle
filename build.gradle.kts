@@ -43,9 +43,9 @@ tasks {
 
 gradlePlugin {
     plugins {
-        create("LegacyCraftGradle") {
-            id = "io.github.nickacpt.legacycraftgradle"
-            implementationClass = "io.github.nickacpt.legacycraftcraft.LegacyCraftPlugin"
+        create("VanillaLegacyCraftGradle") {
+            id = "io.github.nickacpt.legacycraftgradle.vanilla"
+            implementationClass = "io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.VanillaLegacyCraftPlugin"
         }
     }
 }

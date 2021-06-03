@@ -23,7 +23,7 @@
  */
 package io.github.nickacpt.legacycraftgradle.utils
 
-import io.github.nickacpt.legacycraftgradle.LegacyCraftPlugin
+import io.github.nickacpt.legacycraftgradle.BaseLegacyCraftPlugin
 import org.apache.commons.io.FileUtils
 import org.gradle.api.logging.Logger
 import java.io.File
@@ -44,7 +44,7 @@ object DownloadUtil {
     @Throws(IOException::class)
     fun downloadIfChanged(from: URL, to: File, logger: Logger, quiet: Boolean = false) {
         val connection = from.openConnection() as HttpURLConnection
-        if (LegacyCraftPlugin.refreshDeps) {
+        if (BaseLegacyCraftPlugin.refreshDeps) {
             getETagFile(to).delete()
             to.delete()
         }

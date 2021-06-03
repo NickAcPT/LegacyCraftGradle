@@ -21,25 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.nickacpt.legacycraftgradle.providers.minecraft.assets
+package io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.minecraft.assets
 
-class AssetObject {
-    val hash: String? = null
-    val size: Long = 0
-    override fun equals(o: Any?): Boolean {
-        return if (this === o) {
-            true
-        } else if (o == null || javaClass != o.javaClass) {
-            false
-        } else {
-            val that = o as AssetObject
-            size == that.size && hash == that.hash
-        }
-    }
+import com.fasterxml.jackson.annotation.JsonProperty
 
-    override fun hashCode(): Int {
-        var result = hash.hashCode()
-        result = 31 * result + (size xor size ushr 32).toInt()
-        return result
+class AssetIndex {
+    val fileMap: Map<String, AssetObject>
+
+    @JsonProperty("map_to_resources")
+    val isMapToResources = false
+    val isVirtual = false
+    val uniqueObjects: Set<AssetObject>
+        get() = HashSet(fileMap.values)
+
+    init {
+        fileMap = LinkedHashMap()
     }
 }

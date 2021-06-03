@@ -21,20 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.nickacpt.legacycraftgradle.providers.minecraft.assets
+package io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.minecraft
 
-import com.fasterxml.jackson.annotation.JsonProperty
+class ManifestVersion {
+    var versions: List<Versions> = ArrayList()
 
-class AssetIndex {
-    val fileMap: Map<String, AssetObject>
-
-    @JsonProperty("map_to_resources")
-    val isMapToResources = false
-    val isVirtual = false
-    val uniqueObjects: Set<AssetObject>
-        get() = HashSet(fileMap.values)
-
-    init {
-        fileMap = LinkedHashMap()
+    class Versions {
+        var id: String? = null
+        var url: String? = null
+        var sha1: String? = null
     }
 }

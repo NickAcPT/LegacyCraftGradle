@@ -21,14 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.nickacpt.legacycraftgradle.providers.minecraft
+package io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.minecraft.assets
 
-class ManifestVersion {
-    var versions: List<Versions> = ArrayList()
+class AssetObject {
+    val hash: String? = null
+    val size: Long = 0
+    override fun equals(o: Any?): Boolean {
+        return if (this === o) {
+            true
+        } else if (o == null || javaClass != o.javaClass) {
+            false
+        } else {
+            val that = o as AssetObject
+            size == that.size && hash == that.hash
+        }
+    }
 
-    class Versions {
-        var id: String? = null
-        var url: String? = null
-        var sha1: String? = null
+    override fun hashCode(): Int {
+        var result = hash.hashCode()
+        result = 31 * result + (size xor size ushr 32).toInt()
+        return result
     }
 }

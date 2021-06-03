@@ -46,8 +46,9 @@ open class ApplyMixinsTask : DefaultTask() {
         val tmpOutputMerge =
             File(output.parentFile, UUID.randomUUID().toString() + "-output.jar").also { ZipUtil.createEmpty(it) }
 
-        val minecraftMappedJar = project.legacyCraftExtension.minecraftProvider.minecraftMappedJar
-        val minecraftUnMappedJar = project.legacyCraftExtension.minecraftProvider.minecraftJar
+        val legacyCraftExtension = project.legacyCraftExtension
+        val minecraftMappedJar = legacyCraftExtension.minecraftProvider.minecraftMappedJar
+        val minecraftUnMappedJar = legacyCraftExtension.minecraftProvider.computeMinecraftJar(legacyCraftExtension)
         val sourceSets = project.withConvention(JavaPluginConvention::class) { sourceSets }
         val mixinFiles = sourceSets["main"]?.resources?.srcDirs?.first()?.listFiles()
             ?.filter { it.nameWithoutExtension.startsWith("mixins.") && it.name.endsWith(".json") }
@@ -80,11 +81,10 @@ open class ApplyMixinsTask : DefaultTask() {
         mergeZip(outputDeobfuscated, tmpOutputMerge)
 
         val mappings =
-            project.legacyCraftExtension.mappingsProvider.getMappingsForVersion(project.legacyCraftExtension.version)
-                ?.reverse()
+            legacyCraftExtension.mappingsProvider.getMappingsForVersion().map { it.reverse() }
 
         println(":applyMixins - Reobfuscating")
-        remapJar(project, tmpOutputMerge, outputReobfuscated, mappings, resolveClassPath = true)
+        remapJar(project, tmpOutputMerge, outputReobfuscated, *mappings.toTypedArray(), resolveClassPath = true)
 
         minecraftUnMappedJar.copyTo(output, true)
 
