@@ -21,16 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package io.github.nickacpt.legacycraftcraft.providers.minecraft
 
-package io.github.nickacpt.legacycraftcraft.providers.minecraft;
+class ManifestVersion {
+    var versions: List<Versions> = ArrayList()
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ManifestVersion {
-	public List<Versions> versions = new ArrayList<>();
-
-	public static class Versions {
-		public String id, url, sha1;
-	}
+    class Versions {
+        var id: String? = null
+        var url: String? = null
+        var sha1: String? = null
+    }
 }

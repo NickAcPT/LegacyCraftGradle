@@ -45,7 +45,7 @@ class MinecraftProvider(val project: Project) {
         val url = version.url
 
         if (version.sha1 != null) {
-            HashedDownloadUtil.downloadIfInvalid(URL(url), minecraftVersionJson, version.sha1, project.logger, true)
+            HashedDownloadUtil.downloadIfInvalid(URL(url), minecraftVersionJson, version.sha1 ?: "", project.logger, true)
         } else {
             // Use the etag if no hash found from url
             downloadIfChanged(URL(url), minecraftVersionJson, project.logger)
@@ -57,12 +57,12 @@ class MinecraftProvider(val project: Project) {
             return minecraftMappedJar
         }
 
-        val clientDownload = minecraftVersionMeta.getDownload("client")
+        val clientDownload = minecraftVersionMeta.getDownload("client") ?: throw Exception("Invalid manifest: No client download section on jar metadata")
 
         HashedDownloadUtil.downloadIfInvalid(
             URL(clientDownload.url),
             minecraftJar,
-            clientDownload.sha1,
+            clientDownload.sha1 ?: "",
             project.logger,
             false
         )

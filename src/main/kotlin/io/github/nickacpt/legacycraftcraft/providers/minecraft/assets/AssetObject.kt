@@ -21,42 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package io.github.nickacpt.legacycraftcraft.providers.minecraft.assets
 
-package io.github.nickacpt.legacycraftcraft.providers.minecraft.assets;
+class AssetObject {
+    val hash: String? = null
+    val size: Long = 0
+    override fun equals(o: Any?): Boolean {
+        return if (this === o) {
+            true
+        } else if (o == null || javaClass != o.javaClass) {
+            false
+        } else {
+            val that = o as AssetObject
+            size == that.size && hash == that.hash
+        }
+    }
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
-@SuppressWarnings("unused")
-public class AssetIndex {
-	private final Map<String, AssetObject> objects;
-	@JsonProperty("map_to_resources") private boolean mapToResources;
-	private boolean virtual;
-
-	public AssetIndex() {
-		this.objects = new LinkedHashMap<>();
-	}
-
-	public Map<String, AssetObject> getFileMap() {
-		return this.objects;
-	}
-
-	public Set<AssetObject> getUniqueObjects() {
-		return new HashSet<>(this.objects.values());
-	}
-
-	public boolean isVirtual() {
-		return this.virtual;
-	}
-
-	public Map<String, AssetObject> getObjects() {
-		return objects;
-	}
-
-	public boolean isMapToResources() {
-		return mapToResources;
-	}
+    override fun hashCode(): Int {
+        var result = hash.hashCode()
+        result = 31 * result + (size xor size ushr 32).toInt()
+        return result
+    }
 }

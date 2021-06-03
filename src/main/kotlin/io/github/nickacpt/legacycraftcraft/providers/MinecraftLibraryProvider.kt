@@ -11,19 +11,20 @@ import org.gradle.kotlin.dsl.maven
 class MinecraftLibraryProvider(val project: Project) {
 
     fun provide() {
-        project.legacyCraftExtension.minecraftLibConfiguration =  project.configurations.create("minecraftlib") {
+        project.legacyCraftExtension.minecraftLibConfiguration = project.configurations.create("minecraftlib") {
             project.configurations.getByName(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME).extendsFrom(it)
         }
         project.repositories.maven(LIBRARIES_BASE)
 
         val versionInfo: MinecraftVersionMeta = project.legacyCraftExtension.minecraftProvider.minecraftVersionMeta
 
-        for (library in versionInfo.libraries) {
+        for (library in versionInfo.libraries ?: emptyList()) {
             if (library.isValidForOS && !library.hasNatives() && library.artifact != null) {
-                project.dependencies.add(
-                    "minecraftlib",
-                    library.name
-                )
+                if (library.name != null)
+                    project.dependencies.add(
+                        "minecraftlib",
+                        library.name
+                    )
             }
         }
 

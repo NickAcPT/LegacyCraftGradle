@@ -21,38 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package io.github.nickacpt.legacycraftcraft.providers.minecraft.assets
 
-package io.github.nickacpt.legacycraftcraft.providers.minecraft.assets;
+import com.fasterxml.jackson.annotation.JsonProperty
 
-@SuppressWarnings("unused")
-public class AssetObject {
-	private String hash;
-	private long size;
+class AssetIndex {
+    val fileMap: Map<String, AssetObject>
 
-	public String getHash() {
-		return this.hash;
-	}
+    @JsonProperty("map_to_resources")
+    val isMapToResources = false
+    val isVirtual = false
+    val uniqueObjects: Set<AssetObject>
+        get() = HashSet(fileMap.values)
 
-	public long getSize() {
-		return this.size;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		} else if ((o == null) || (getClass() != o.getClass())) {
-			return false;
-		} else {
-			AssetObject that = (AssetObject) o;
-			return this.size == that.size && this.hash.equals(that.hash);
-		}
-	}
-
-	@Override
-	public int hashCode() {
-		int result = this.hash.hashCode();
-		result = 31 * result + (int) (this.size ^ this.size >>> 32);
-		return result;
-	}
+    init {
+        fileMap = LinkedHashMap()
+    }
 }

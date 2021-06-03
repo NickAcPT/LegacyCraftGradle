@@ -77,7 +77,7 @@ class MinecraftNativesProvider(private val project: Project) {
 
             // Store a file containing the hash of the extracted natives, used on subsequent runs to skip extracting all the natives if they haven't changed
             val libSha1File = File(nativesDir, libJarFile.name + ".sha1")
-            libSha1File.writeText(library.sha1)
+            libSha1File.writeText(library.sha1 ?: "")
         }
     }
 
@@ -115,7 +115,7 @@ class MinecraftNativesProvider(private val project: Project) {
 
     private val natives: List<MinecraftVersionMeta.Download>
         get() = project.legacyCraftExtension.minecraftProvider.minecraftVersionMeta.libraries
-            .filter { it.hasNativesForOS() }
-            .map { it.classifierForOS }
+            ?.filter { it.hasNativesForOS() }
+            ?.mapNotNull { it.classifierForOS } ?: emptyList()
 
 }

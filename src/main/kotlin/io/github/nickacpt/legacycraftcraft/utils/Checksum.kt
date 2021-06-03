@@ -21,43 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package io.github.nickacpt.legacycraftcraft.utils
 
-package io.github.nickacpt.legacycraftcraft.utils;
+import com.google.common.hash.Hashing
+import com.google.common.io.Files
+import org.gradle.api.logging.Logging
+import java.io.File
+import java.io.IOException
 
-import java.io.File;
-import java.io.IOException;
+object Checksum {
+    private val log = Logging.getLogger(Checksum::class.java)
+    fun equals(file: File?, checksum: String): Boolean {
+        if (file == null || !file.exists()) {
+            return false
+        }
+        try {
+            val hash = Files.asByteSource(file).hash(Hashing.sha1())
+            log.debug("Checksum check: '$hash' == '$checksum'?")
+            return hash.toString() == checksum
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return false
+    }
 
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
-import org.gradle.api.logging.Logger;
-import org.gradle.api.logging.Logging;
-
-public class Checksum {
-	private static final Logger log = Logging.getLogger(Checksum.class);
-
-	public static boolean equals(File file, String checksum) {
-		if (file == null || !file.exists()) {
-			return false;
-		}
-
-		try {
-			HashCode hash = Files.asByteSource(file).hash(Hashing.sha1());
-			log.debug("Checksum check: '" + hash.toString() + "' == '" + checksum + "'?");
-			return hash.toString().equals(checksum);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return false;
-	}
-
-	public static byte[] sha256(File file) {
-		try {
-			HashCode hash = Files.asByteSource(file).hash(Hashing.sha256());
-			return hash.asBytes();
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to get file hash");
-		}
-	}
+    fun sha256(file: File): ByteArray {
+        return try {
+            val hash = Files.asByteSource(file).hash(Hashing.sha256())
+            hash.asBytes()
+        } catch (e: IOException) {
+            throw RuntimeException("Failed to get file hash")
+        }
+    }
 }

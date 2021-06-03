@@ -51,7 +51,7 @@ class MinecraftAssetsProvider(val project: Project) {
         val extension: LegacyCraftExtension = project.legacyCraftExtension
         val offline = project.gradle.startParameter.isOffline
         val versionInfo: MinecraftVersionMeta = extension.minecraftProvider.minecraftVersionMeta
-        val assetIndex: MinecraftVersionMeta.AssetIndex = versionInfo.assetIndex
+        val assetIndex: MinecraftVersionMeta.AssetIndex = versionInfo.assetIndex ?: return
 
         // get existing cache files
         var assets: File = project.getCacheFile(extension.version, "assets")
@@ -99,9 +99,9 @@ class MinecraftAssetsProvider(val project: Project) {
         }
 
         val stopwatch = Stopwatch.createStarted()
-        val parent: Map<String, AssetObject> = index.objects
+        val parent: Map<String, AssetObject> = index.fileMap
         for ((key, `object`) in parent) {
-            val sha1: String = `object`.hash
+            val sha1: String = `object`.hash ?: ""
             val filename = if (index.isMapToResources) key else "objects" + File.separator + sha1.substring(0, 2) + File.separator + sha1
             val file = File(assets, filename)
             if (offline) {
