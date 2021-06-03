@@ -11,7 +11,7 @@ class MappingsProvider(val project: Project) {
 
     private fun getCacheFileForVersion(version: ClientVersion) = project.getCacheFile(version, "mappings.tinyv2")
 
-    fun getMappingsForVersion(version: ClientVersion): RemapMappingFile {
+    fun getMappingsForVersion(version: ClientVersion): RemapMappingFile? {
         val url = "https://raw.githubusercontent.com/NickAcPT/LegacyCraftMappings/main/$version/client.tinyv2"
 
         val mappingsFile = getCacheFileForVersion(version)

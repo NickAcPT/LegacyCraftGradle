@@ -81,7 +81,7 @@ open class ApplyMixinsTask : DefaultTask() {
 
         val mappings =
             project.legacyCraftExtension.mappingsProvider.getMappingsForVersion(project.legacyCraftExtension.version)
-                .reverse()
+                ?.reverse()
 
         println(":applyMixins - Reobfuscating")
         remapJar(project, tmpOutputMerge, outputReobfuscated, mappings, resolveClassPath = true)

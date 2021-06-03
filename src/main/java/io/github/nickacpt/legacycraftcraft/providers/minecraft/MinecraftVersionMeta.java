@@ -121,6 +121,13 @@ public class MinecraftVersionMeta {
     }
 
     public static class Download extends Downloadable {
+        public Download(String path, String sha1, long size, String url) {
+            super(path, sha1, size, url);
+        }
+
+        public Download() {
+        }
+
         public File relativeFile(File baseDirectory) {
             return new File(baseDirectory, getPath());
         }
@@ -249,6 +256,16 @@ public class MinecraftVersionMeta {
 
     // A base class for everything that can be downloaded
     public static abstract class Downloadable {
+        public Downloadable(String path, String sha1, long size, String url) {
+            this.path = path;
+            this.sha1 = sha1;
+            this.size = size;
+            this.url = url;
+        }
+
+        public Downloadable() {
+        }
+
         private String path;
         private String sha1;
         private long size;
