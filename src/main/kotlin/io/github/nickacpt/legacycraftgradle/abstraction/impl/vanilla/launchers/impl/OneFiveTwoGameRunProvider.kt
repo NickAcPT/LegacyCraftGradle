@@ -18,7 +18,7 @@ class OneFiveTwoGameRunProvider(val project: Project) : GameRunProvider {
         runClientTask.classpath(
             if (project.legacyCraftExtension.runDeobfuscatedClient) applyMixinsTask.outputDeobfuscated else applyMixinsTask.output,
             project.legacyCraftExtension.launchWrapperConfiguration.resolve(),
-            classPath.filterNot { it == project.legacyCraftExtension.minecraftDependencyLocation || it.nameWithoutExtension == "launchwrapper-1.5" }
+            classPath.filterNot { it == project.legacyCraftExtension.minecraftDependencyLocation }
         )
         runClientTask.workingDir = gameDir
         runClientTask.mainClass.set("net.minecraft.launchwrapper.Launch")

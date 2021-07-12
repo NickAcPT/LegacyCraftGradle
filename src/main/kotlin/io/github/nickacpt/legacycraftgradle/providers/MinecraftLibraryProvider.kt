@@ -6,10 +6,11 @@ import org.gradle.api.plugins.JavaPlugin
 
 
 class MinecraftLibraryProvider(val project: Project) {
+    companion object {
+        val libraryConfigurationName = "minecraftlib"
+    }
 
     fun provide() {
-
-        val libraryConfigurationName = "minecraftlib"
         project.legacyCraftExtension.minecraftLibConfiguration = project.configurations.create(libraryConfigurationName) {
             project.configurations.getByName(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME).extendsFrom(it)
         }

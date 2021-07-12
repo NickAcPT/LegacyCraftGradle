@@ -36,17 +36,18 @@ class VanillaMinecraftRunProvider(val impl: VanillaGameVersionImpl) : GameAbstra
     }
 
     private fun addLegacyLauncher() {
-        val launchWrapperConfiguration = project.configurations.create("launchWrapper") {
+        val wrapperConfiguration = "launchWrapper"
+        val launchWrapperConfiguration = project.configurations.create(wrapperConfiguration) {
             project.configurations.getByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME).extendsFrom(it)
         }
         project.legacyCraftExtension.launchWrapperConfiguration = launchWrapperConfiguration
 
-        val launcherVersion = "aff3a537ee"
+        val launcherVersion = "ed6d4b98f1"
         project.repositories.maven("https://jitpack.io")
 
         project.dependencies.add(
-            "launchWrapper",
-            "com.github.sp614x:LegacyLauncher:$launcherVersion"
+            wrapperConfiguration,
+            "com.github.NickAcPT:LegacyLauncher:$launcherVersion"
         )
     }
 

@@ -3,11 +3,20 @@ package io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla
 import io.github.nickacpt.legacycraftgradle.abstraction.GameAbstractionMinecraftLibrariesProvider
 import io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.minecraft.MinecraftVersionMeta
 import io.github.nickacpt.legacycraftgradle.utils.LIBRARIES_BASE
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.kotlin.dsl.maven
 
-class VanillaMinecraftLibrariesProvider(val vanillaGameVersionImpl: VanillaGameVersionImpl) : GameAbstractionMinecraftLibrariesProvider {
+class VanillaMinecraftLibrariesProvider(val vanillaGameVersionImpl: VanillaGameVersionImpl) :
+    GameAbstractionMinecraftLibrariesProvider {
+    companion object {
+
+        private val mixinsVersion = "0.9.2+mixin.0.8.2"
+        private val asmVersion = "9.1"
+        val mixinDependency = "net.fabricmc:sponge-mixin:$mixinsVersion"
+        val asmDependency = "org.ow2.asm:asm:$asmVersion"
+    }
+
     override fun provideMinecraftLibraries(libraryConfigurationName: String) {
+        val blacklistedDependencies = listOf("launchwrapper", "asm-all")
         val project = vanillaGameVersionImpl.project
         project.repositories.maven(LIBRARIES_BASE)
 
@@ -15,7 +24,7 @@ class VanillaMinecraftLibrariesProvider(val vanillaGameVersionImpl: VanillaGameV
 
         for (library in versionInfo.libraries ?: emptyList()) {
             if (library.isValidForOS && !library.hasNatives() && library.artifact != null) {
-                if (library.name != null)
+                if (library.name != null && blacklistedDependencies.none { library.name.contains(it, true) })
                     project.dependencies.add(
                         libraryConfigurationName,
                         library.name
@@ -24,10 +33,15 @@ class VanillaMinecraftLibrariesProvider(val vanillaGameVersionImpl: VanillaGameV
         }
 
         // Provide updated ow2 asm
-        val asmVersion = "9.1"
         project.dependencies.add(
-            JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME,
-            "org.ow2.asm:asm:$asmVersion"
+            libraryConfigurationName,
+            asmDependency
+        )
+
+        // Provide Mixins
+        project.dependencies.add(
+            libraryConfigurationName,
+            mixinDependency
         )
     }
 
