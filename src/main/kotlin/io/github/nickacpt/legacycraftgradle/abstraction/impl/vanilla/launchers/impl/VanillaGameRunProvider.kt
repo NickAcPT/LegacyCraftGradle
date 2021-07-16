@@ -1,12 +1,13 @@
 package io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.launchers.impl
 
 import io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.launchers.GameRunProvider
+import io.github.nickacpt.legacycraftgradle.config.ClientVersion
 import io.github.nickacpt.legacycraftgradle.legacyCraftExtension
 import org.gradle.api.Project
 import org.gradle.api.tasks.JavaExec
 import java.io.File
 
-class OneFiveTwoGameRunProvider(val project: Project) : GameRunProvider {
+class VanillaGameRunProvider(val project: Project, val version: ClientVersion) : GameRunProvider {
     override fun registerRunExtension(
         runClientTask: JavaExec,
         nativesDir: File,
@@ -22,7 +23,16 @@ class OneFiveTwoGameRunProvider(val project: Project) : GameRunProvider {
         )
         runClientTask.workingDir = gameDir
         runClientTask.mainClass.set("net.minecraft.launchwrapper.Launch")
-        runClientTask.args = listOf(
+        runClientTask.args = (if (version == ClientVersion.ONE_FIVE_TWO) emptyList() else listOf(
+            "--version",
+            project.name,
+
+            "--accessToken",
+            "0",
+
+            "--userProperties",
+            "{}",
+        )) + listOf(
             "Developer", /* Name */
 
             "--gameDir", /* Game Dir */
@@ -31,6 +41,7 @@ class OneFiveTwoGameRunProvider(val project: Project) : GameRunProvider {
             "--assetsDir", /* Assets Dir */
             "\"${assetsDir.absolutePath}\"", /* Assets Dir */
         )
+
 
         runClientTask.jvmArgs = listOf(
             "\"-Djava.library.path=${nativesDir.absolutePath}\"",
