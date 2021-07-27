@@ -33,7 +33,7 @@ class MinecraftProvider(val project: Project) {
         val outputFile = minecraftMappedJar
 
         println(":mapping - Remapping Minecraft ${project.legacyCraftExtension.abstraction.getVersionName()}")
-        remapJar(project, minecraftJar, outputFile, *mappings.toTypedArray())
+        remapJar(project, minecraftJar, outputFile, mappings)
         return outputFile
     }
 

@@ -44,11 +44,12 @@ fun Project.resolveClasspathFile(): List<File> {
         .flatMap { conf -> conf.resolve() }
 }
 
-fun mergeZip(output: File, input: File, condition: (ZipEntry) -> Boolean = {true}) {
+fun mergeZip(output: File, input: File, classPrefix: String = "", condition: (ZipEntry) -> Boolean = {true}) {
     ZipFile(input).use { zip ->
         val newEntries = zip.entries().iterator().asSequence().mapNotNull { zipEntry ->
-            if (!condition(zipEntry)) return@mapNotNull null
-            ByteSource(zipEntry.name, zip.getInputStream(zipEntry).use { it.readAllBytes() }, zipEntry.time)
+            val prefix = if (zipEntry.name.endsWith(".class")) classPrefix else ""
+            if (!condition(zipEntry) || zipEntry.isDirectory) return@mapNotNull null
+            ByteSource(prefix + zipEntry.name, zip.getInputStream(zipEntry).use { it.readAllBytes() }, zipEntry.time)
         }.toList()
 
         ZipUtil.addOrReplaceEntries(output, *newEntries.toTypedArray())

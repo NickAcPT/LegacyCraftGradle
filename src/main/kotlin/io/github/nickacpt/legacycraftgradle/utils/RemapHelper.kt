@@ -19,27 +19,25 @@ fun remapJar(
     project: Project,
     inputFile: File,
     output: File,
-    vararg mappings: RemapMappingFile?,
+    mappings: RemapMappingFile?,
     resolveClassPath: Boolean = false
 ) {
     val remapper = TinyRemapper.newRemapper()
         .also {
-            mappings.forEach { f ->
-                if (f == null) return@forEach
-                it.withMappings(
-                    TinyUtils.createTinyMappingProvider(
-                        f.file.toPath(),
-                        f.from,
-                        f.to
-                    )
+            if (mappings == null) return@also
+            it.withMappings(
+                TinyUtils.createTinyMappingProvider(
+                    mappings.file.toPath(),
+                    mappings.from,
+                    mappings.to
                 )
-            }
-        }
-        .renameInvalidLocals(true)
-        .rebuildSourceFilenames(true)
-        .fixPackageAccess(true)
-        .ignoreConflicts(true)
-        .build()
+            )
+                .renameInvalidLocals(true)
+                .rebuildSourceFilenames(true)
+                .fixPackageAccess(true)
+                .ignoreConflicts(true)
+        }.build()
+
     try {
         val input = inputFile.toPath()
 

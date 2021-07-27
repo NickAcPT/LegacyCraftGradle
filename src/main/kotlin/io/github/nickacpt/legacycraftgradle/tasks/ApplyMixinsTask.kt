@@ -12,6 +12,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.maven
 import org.gradle.kotlin.dsl.withConvention
 import org.zeroturnaround.zip.FileSource
 import org.zeroturnaround.zip.ZipUtil
@@ -28,15 +29,21 @@ open class ApplyMixinsTask : DefaultTask() {
 
     @get:OutputFile
     val output: File
-        get() = File(input.parentFile, input.nameWithoutExtension.removeSuffix("-dev") + "-jarmod.jar")
+        get() = File(input.parentFile, getInputName() + "-jarmod.jar")
 
     @get:OutputFile
     val outputDeobfuscated: File
-        get() = File(input.parentFile, input.nameWithoutExtension.removeSuffix("-dev") + "-deobf.jar")
+        get() = File(input.parentFile, getInputName() + "-deobf.jar")
 
     @get:OutputFile
     val outputReobfuscated: File
-        get() = File(input.parentFile, input.nameWithoutExtension.removeSuffix("-dev") + "-reobf.jar")
+        get() = File(input.parentFile, getInputName() + "-reobf.jar")
+
+    @get:OutputFile
+    val outputJavaAgent: File
+        get() = File(input.parentFile, getInputName() + "-javaagent.jar")
+
+    private fun getInputName() = input.nameWithoutExtension.removeSuffix("-dev")
 
     @TaskAction
     fun doAction() {
@@ -80,12 +87,15 @@ open class ApplyMixinsTask : DefaultTask() {
         minecraftMappedJar.copyTo(outputDeobfuscated, true)
         mergeZip(outputDeobfuscated, tmpOutputMerge)
 
-        val mappings =
-            legacyCraftExtension.mappingsProvider.getMappingsForVersion().map { it.reverse() }
+        val mappings = legacyCraftExtension.mappingsProvider.getMappingsForVersion().reverse()
 
         println(":applyMixins - Reobfuscating")
-        remapJar(project, tmpOutputMerge, outputReobfuscated, *mappings.toTypedArray(), resolveClassPath = true)
+        remapJar(project, tmpOutputMerge, outputReobfuscated, mappings, resolveClassPath = true)
 
+        println(":applyMixins - Creating Java Agent")
+        createJavaAgent()
+
+        println(":applyMixins - Merging Final Jar")
         minecraftUnMappedJar.copyTo(output, true)
 
         mergeZip(output, outputReobfuscated)
@@ -94,6 +104,19 @@ open class ApplyMixinsTask : DefaultTask() {
 
         if (tmpOutputMerge.exists()) tmpOutputMerge.delete()
         println(":applyMixins - Done")
+    }
+
+    private fun createJavaAgent() {
+        createEmptyJavaAgentJar(outputJavaAgent)
+        mergeZip(outputJavaAgent, outputReobfuscated, "classes/")
+    }
+
+    private fun createEmptyJavaAgentJar(outputJavaAgent: File) {
+        project.repositories.maven("https://jitpack.io") // Add Jitpack if needed
+        val configuration = project.configurations.detachedConfiguration()
+        configuration.dependencies.add(project.dependencies.create("com.github.NickAcPT:LegacyCraftAgent:259244584c"))
+
+        configuration.resolve().first().copyTo(outputJavaAgent, true)
     }
 
 }
