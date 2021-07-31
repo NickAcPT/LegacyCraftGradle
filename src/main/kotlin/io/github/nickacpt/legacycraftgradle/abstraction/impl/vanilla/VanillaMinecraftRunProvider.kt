@@ -1,6 +1,7 @@
 package io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla
 
 import io.github.nickacpt.legacycraftgradle.abstraction.GameAbstractionMinecraftRunProvider
+import io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.VanillaMinecraftLibrariesProvider.Companion.asmUtilDependency
 import io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.launchers.GameRunProvider
 import io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.launchers.impl.VanillaGameRunProvider
 import io.github.nickacpt.legacycraftgradle.config.ClientVersion
@@ -45,7 +46,7 @@ class VanillaMinecraftRunProvider(val impl: VanillaGameVersionImpl) : GameAbstra
 
         val launcherVersion =
             when (version) {
-                ClientVersion.ONE_FIVE_TWO -> "ed6d4b98f1"
+                ClientVersion.ONE_FIVE_TWO -> "c3a899f8b4"
                 ClientVersion.ONE_EIGHT_NINE -> "eeb97beb2d"
             }
 
@@ -56,6 +57,14 @@ class VanillaMinecraftRunProvider(val impl: VanillaGameVersionImpl) : GameAbstra
             "com.github.NickAcPT:LegacyLauncher:$launcherVersion"
         ) as ExternalModuleDependency
         legacyLauncher.exclude(module = "lwjgl")
+
+        if (version == ClientVersion.ONE_EIGHT_NINE) {
+            // Add asm-util to the legacyWrapper config
+            project.dependencies.add(
+                wrapperConfiguration,
+                asmUtilDependency
+            )
+        }
     }
 
     private fun getRunProvider(version: ClientVersion): GameRunProvider? {

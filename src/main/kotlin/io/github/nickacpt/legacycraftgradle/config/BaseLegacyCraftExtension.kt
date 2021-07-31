@@ -10,7 +10,7 @@ import java.io.File
 
 abstract class BaseLegacyCraftExtension {
 
-    var runDeobfuscatedClient: Boolean = true
+    var runDeobfuscatedClient: Boolean = false
 
     var buildJarMod: Boolean = true
 
@@ -18,7 +18,7 @@ abstract class BaseLegacyCraftExtension {
 
     var buildDeobfuscatedJar: Boolean = false
 
-    var buildMixinAgent: Boolean = false
+    var runMixinWithTweaker: Boolean = false
 
     var extraJarMods = mutableListOf<String>()
 

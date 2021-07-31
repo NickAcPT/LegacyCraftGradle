@@ -18,6 +18,7 @@ dependencies {
     implementation(gradleKotlinDsl())
 
     // I/O
+    implementation ("org.ow2.asm:asm:9.1")
     implementation ("commons-io:commons-io:2.8.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.+")
     implementation("com.google.guava:guava:30.1-jre")

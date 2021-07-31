@@ -9,10 +9,11 @@ class VanillaMinecraftLibrariesProvider(val vanillaGameVersionImpl: VanillaGameV
     GameAbstractionMinecraftLibrariesProvider {
     companion object {
 
-        private val mixinsVersion = "0.9.2+mixin.0.8.2"
-        private val asmVersion = "9.1"
-        val mixinDependency = "net.fabricmc:sponge-mixin:$mixinsVersion"
-        val asmDependency = "org.ow2.asm:asm:$asmVersion"
+        private const val mixinsVersion = "0.9.2+mixin.0.8.2"
+        private const val asmVersion = "9.1"
+        const val mixinDependency = "net.fabricmc:sponge-mixin:$mixinsVersion"
+        const val asmDependency = "org.ow2.asm:asm:$asmVersion"
+        const val asmUtilDependency = "org.ow2.asm:asm-util:$asmVersion"
     }
 
     override fun provideMinecraftLibraries(libraryConfigurationName: String) {
@@ -36,6 +37,11 @@ class VanillaMinecraftLibrariesProvider(val vanillaGameVersionImpl: VanillaGameV
         project.dependencies.add(
             libraryConfigurationName,
             asmDependency
+        )
+        // Provide javax annotations
+        project.dependencies.add(
+            libraryConfigurationName,
+            "javax.annotation:javax.annotation-api:1.3.2"
         )
 
         // Provide Mixins

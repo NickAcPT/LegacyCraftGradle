@@ -53,10 +53,10 @@ abstract class BaseLegacyCraftPlugin : Plugin<Project> {
 
             extension.launchProvider.provide()
 
-            jarTask.finalizedBy(applyMixins)
             tasks.getByName("assemble").finalizedBy(applyMixins)
         }
     }
 
-    private fun Project.getJarTask() = kotlin.runCatching { tasks.getByName("shadowJar") }.getOrNull() ?: tasks.getByName("jar")
 }
+
+fun Project.getJarTask() = kotlin.runCatching { tasks.getByName("shadowJar") }.getOrNull() ?: tasks.getByName("jar")
