@@ -12,6 +12,12 @@ abstract class BaseLegacyCraftExtension {
 
     var runDeobfuscatedClient: Boolean = true
 
+    var buildJarMod: Boolean = true
+
+    var buildJarModAgent: Boolean = false
+
+    var buildMixinAgent: Boolean = false
+
     var extraJarMods = mutableListOf<String>()
 
     internal lateinit var abstraction: GameVersionAbstraction<*>

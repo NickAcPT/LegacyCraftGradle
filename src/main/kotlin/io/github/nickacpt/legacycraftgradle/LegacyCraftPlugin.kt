@@ -45,7 +45,7 @@ abstract class BaseLegacyCraftPlugin : Plugin<Project> {
                 (this as? Jar)?.archiveClassifier?.set("dev")
             }
             val applyMixins = tasks.create("applyMixins", ApplyMixinsTask::class).apply {
-                input = jarTask.outputs.files.first()
+                inputFunc = { jarTask.outputs.files.first() }
             }
 
             extension.applyMixinsTask = applyMixins

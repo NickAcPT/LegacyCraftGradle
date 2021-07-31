@@ -21,8 +21,11 @@ import java.util.*
 
 open class ApplyMixinsTask : DefaultTask() {
 
+    lateinit var inputFunc: () -> File
+
     @get:InputFile
-    lateinit var input: File
+    val input: File
+        get() = inputFunc()
 
     private val mixinsOutputDir: File
         get() = File(project.buildDir, "tmp" + File.separatorChar + "mixins-applied")
@@ -47,7 +50,7 @@ open class ApplyMixinsTask : DefaultTask() {
 
     @TaskAction
     fun doAction() {
-        mixinsOutputDir.deleteRecursively()
+        deleteMixinsOutputDir()
         mixinsOutputDir.mkdirs()
 
         val tmpOutputMerge =
@@ -92,18 +95,29 @@ open class ApplyMixinsTask : DefaultTask() {
         println(":applyMixins - Reobfuscating")
         remapJar(project, tmpOutputMerge, outputReobfuscated, mappings, resolveClassPath = true)
 
-        println(":applyMixins - Creating Java Agent")
-        createJavaAgent()
+        if (project.legacyCraftExtension.buildJarModAgent) {
+            println(":applyMixins - Creating Java Agent")
+            createJavaAgent()
+        } else {
+            outputJavaAgent.delete()
+        }
 
-        println(":applyMixins - Merging Final Jar")
-        minecraftUnMappedJar.copyTo(output, true)
+        if (project.legacyCraftExtension.buildJarMod) {
+            println(":applyMixins - Merging Final Jar")
+            minecraftUnMappedJar.copyTo(output, true)
+            mergeZip(output, outputReobfuscated)
 
-        mergeZip(output, outputReobfuscated)
-
-        ZipUtil.removeEntry(output, "META-INF/")
+            ZipUtil.removeEntry(output, "META-INF/")
+        } else {
+            output.delete()
+        }
 
         if (tmpOutputMerge.exists()) tmpOutputMerge.delete()
         println(":applyMixins - Done")
+    }
+
+    private fun deleteMixinsOutputDir() {
+        mixinsOutputDir.deleteRecursively()
     }
 
     private fun createJavaAgent() {
