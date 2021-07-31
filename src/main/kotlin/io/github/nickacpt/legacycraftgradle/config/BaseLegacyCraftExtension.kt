@@ -16,6 +16,8 @@ abstract class BaseLegacyCraftExtension {
 
     var buildJarModAgent: Boolean = false
 
+    var buildDeobfuscatedJar: Boolean = false
+
     var buildMixinAgent: Boolean = false
 
     var extraJarMods = mutableListOf<String>()

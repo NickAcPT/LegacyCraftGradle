@@ -67,12 +67,14 @@ open class ApplyMixinsTask : DefaultTask() {
             println(":applyMixins - Applying mixin configuration ${it.name}")
         }
 
-        println(":applyMixins - Merging Jar with JarMod")
+        // Merge compiled jar (input from build) with a temporary empty zip file
         mergeZip(tmpOutputMerge, input) { zipEntry ->
             val entryFileName = zipEntry.name.substringAfterLast("/")
-            return@mergeZip !(entryFileName.startsWith("mixins.") && entryFileName.endsWith(".json"))
+            val isMixinConfiguration = entryFileName.startsWith("mixins.") && entryFileName.endsWith(".json")
+            return@mergeZip !isMixinConfiguration
         }
 
+        // Apply classes and find them
         val modifiedEntries = MixinOfflineApplierTool.apply(
             minecraftMappedJar,
             input,
@@ -83,18 +85,29 @@ open class ApplyMixinsTask : DefaultTask() {
         )
 
         println(":applyMixins - Merging modified classes")
+
+        // Merge mixin output classes (modified classes) with compiled jar (input from build)
         ZipUtil.addOrReplaceEntries(tmpOutputMerge, *modifiedEntries.map {
             FileSource(it, File(mixinsOutputDir, it))
         }.toTypedArray())
 
-        minecraftMappedJar.copyTo(outputDeobfuscated, true)
-        mergeZip(outputDeobfuscated, tmpOutputMerge)
+        // Copy mapped (deobfuscated) minecraft to deobfuscated output jar
+        if (project.legacyCraftExtension.buildDeobfuscatedJar) {
+            minecraftMappedJar.copyTo(outputDeobfuscated, true)
+            mergeZip(outputDeobfuscated, tmpOutputMerge)
+        }
 
+        // Load mappings and reverse them
         val mappings = legacyCraftExtension.mappingsProvider.getMappingsForVersion().reverse()
 
         println(":applyMixins - Reobfuscating")
+        // Apply mappings to our temporary file.
+        // At this moment it contains:
+        //  - compiled jar (input from build)
+        //  - mixin output classes (modified classes)
         remapJar(project, tmpOutputMerge, outputReobfuscated, mappings, resolveClassPath = true)
 
+        // Create JavaAgent jar if needeed
         if (project.legacyCraftExtension.buildJarModAgent) {
             println(":applyMixins - Creating Java Agent")
             createJavaAgent()
@@ -102,16 +115,17 @@ open class ApplyMixinsTask : DefaultTask() {
             outputJavaAgent.delete()
         }
 
+        // Create merged jarmod if requested by user
         if (project.legacyCraftExtension.buildJarMod) {
             println(":applyMixins - Merging Final Jar")
             minecraftUnMappedJar.copyTo(output, true)
             mergeZip(output, outputReobfuscated)
 
             ZipUtil.removeEntry(output, "META-INF/")
-        } else {
-            output.delete()
         }
 
+        if (!project.legacyCraftExtension.buildJarMod) output.delete()
+        if (!project.legacyCraftExtension.buildDeobfuscatedJar) outputDeobfuscated.delete()
         if (tmpOutputMerge.exists()) tmpOutputMerge.delete()
         println(":applyMixins - Done")
     }
