@@ -4,6 +4,7 @@ import io.github.nickacpt.legacycraftgradle.BaseLegacyCraftPlugin
 import io.github.nickacpt.legacycraftgradle.abstraction.GameAbstractionMinecraftNativesProvider
 import io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.minecraft.MinecraftVersionMeta
 import io.github.nickacpt.legacycraftgradle.getCacheFile
+import io.github.nickacpt.legacycraftgradle.isOffline
 import io.github.nickacpt.legacycraftgradle.legacyCraftExtension
 import io.github.nickacpt.legacycraftgradle.utils.HashedDownloadUtil
 import org.apache.commons.io.FileUtils
@@ -30,7 +31,7 @@ class VanillaMinecraftNativesProvider(val impl: VanillaGameVersionImpl) : GameAb
     private fun extractNatives() {
         val (nativesDir, jarStore) = getNativeFileDirs()
 
-        val offline = project.gradle.startParameter.isOffline
+        val offline = project.isOffline
         if (nativesDir.exists()) {
             try {
                 FileUtils.deleteDirectory(nativesDir)

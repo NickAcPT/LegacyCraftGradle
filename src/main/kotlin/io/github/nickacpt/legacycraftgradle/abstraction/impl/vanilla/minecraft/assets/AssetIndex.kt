@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 class AssetIndex {
     val fileMap: Map<String, AssetObject>
+    val objects: Map<String, AssetObject>
 
     @JsonProperty("map_to_resources")
     val isMapToResources = false
@@ -36,5 +37,6 @@ class AssetIndex {
 
     init {
         fileMap = LinkedHashMap()
+        objects = LinkedHashMap()
     }
 }

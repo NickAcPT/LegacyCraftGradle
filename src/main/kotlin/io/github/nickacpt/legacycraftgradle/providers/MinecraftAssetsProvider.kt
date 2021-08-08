@@ -68,7 +68,7 @@ class MinecraftAssetsProvider(val project: Project) {
         if (offline) {
             if (assetsInfo.exists()) {
                 //We know it's outdated but can't do anything about it, oh well
-                project.logger.warn("Asset index outdated")
+                project.logger.warn("Asset index might be outdated")
             } else {
                 //We don't know what assets we need, just that we don't have any
                 throw GradleException("Asset index not found at " + assetsInfo.absolutePath)
@@ -101,13 +101,14 @@ class MinecraftAssetsProvider(val project: Project) {
         }
 
         val stopwatch = Stopwatch.createStarted()
-        val parent: Map<String, AssetObject> = index.fileMap
+        val parent: Map<String, AssetObject> = index.objects.takeIf { it.isNotEmpty() } ?: index.fileMap
         for ((key, `object`) in parent) {
             val sha1: String = `object`.hash ?: ""
             val filename = if (index.isMapToResources) key else "objects" + File.separator + sha1.substring(
                 0,
                 2
             ) + File.separator + sha1
+            if (filename.endsWith(".sha1")) continue
             val file = File(assets, filename)
             if (offline) {
                 if (file.exists()) {

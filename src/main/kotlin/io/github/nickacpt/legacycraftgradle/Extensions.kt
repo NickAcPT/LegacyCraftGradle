@@ -21,6 +21,9 @@ fun Project.evaluate(code: Project.() -> Unit) {
     }
 }
 
+val Project.isOffline: Boolean
+get() = gradle.startParameter.isOffline
+
 val Project.legacyCraftCacheFolder: File
     get() {
         return File(gradle.gradleUserHomeDir, "caches" + File.separatorChar + "legacy-minecraft")

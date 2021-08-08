@@ -3,6 +3,7 @@ package io.github.nickacpt.legacycraftgradle.providers
 import io.github.nickacpt.legacycraftgradle.BaseLegacyCraftPlugin
 import io.github.nickacpt.legacycraftgradle.config.BaseLegacyCraftExtension
 import io.github.nickacpt.legacycraftgradle.getCacheFile
+import io.github.nickacpt.legacycraftgradle.isOffline
 import io.github.nickacpt.legacycraftgradle.legacyCraftExtension
 import io.github.nickacpt.legacycraftgradle.utils.remapJar
 import org.gradle.api.Project
@@ -25,7 +26,7 @@ class MinecraftProvider(val project: Project) {
 
         val minecraftJar = computeMinecraftJar(craftExtension)
 
-        if (!BaseLegacyCraftPlugin.refreshDeps && minecraftMappedJar.exists()) {
+        if (!BaseLegacyCraftPlugin.refreshDeps && project.isOffline && minecraftMappedJar.exists()) {
             return minecraftMappedJar
         }
 

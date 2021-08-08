@@ -5,6 +5,7 @@ import io.github.nickacpt.legacycraftgradle.abstraction.GameAbstractionMinecraft
 import io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.minecraft.ManifestVersion
 import io.github.nickacpt.legacycraftgradle.abstraction.impl.vanilla.minecraft.MinecraftVersionMeta
 import io.github.nickacpt.legacycraftgradle.getCacheFile
+import io.github.nickacpt.legacycraftgradle.isOffline
 import io.github.nickacpt.legacycraftgradle.legacyCraftExtension
 import io.github.nickacpt.legacycraftgradle.mergeZip
 import io.github.nickacpt.legacycraftgradle.utils.DownloadUtil
@@ -24,11 +25,14 @@ class VanillaMinecraftProvider(val vanillaGameVersionImpl: VanillaGameVersionImp
         val versionManifestJson = project.getCacheFile("version_manifest.json")
         val minecraftVersionJson = project.getCacheFile("version.json")
         val minecraftJar = project.getCacheFile("minecraft.jar")
+
+
         val clientVersion = craftExtension.version
         val mapper = craftExtension.mapper
 
-
-        DownloadUtil.downloadIfChanged(URL(VERSION_MANIFESTS), versionManifestJson, project.logger)
+        if (!project.isOffline && !versionManifestJson.exists()) {
+            DownloadUtil.downloadIfChanged(URL(VERSION_MANIFESTS), versionManifestJson, project.logger)
+        }
         val versionManifest = mapper.readValue<ManifestVersion>(versionManifestJson)
 
         val version = versionManifest.versions.first { it.id == clientVersion.launcherId }
